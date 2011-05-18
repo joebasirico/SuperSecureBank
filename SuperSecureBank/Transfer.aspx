@@ -14,7 +14,7 @@
 		<img src="Images/MapsALT.png" alt="Transfer Funds" />
 		Transfer funds to other accounts</h1>
 	<div>
-		<asp:Label Visible="false" ID="message" runat="server" /><br />
+		<asp:Label ID="message" runat="server" /><br />
 		<table style="width: 437px">
 			<tr>
 				<td class="style1">

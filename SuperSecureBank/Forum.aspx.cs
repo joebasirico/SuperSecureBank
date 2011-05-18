@@ -26,8 +26,8 @@ namespace SuperSecureBank
         {
             try
             {
-                int valid = Validated.Value == "False" ? 0 : 1;
-                int userID = UserMgmt.LookupSession(Request.Cookies[Settings.Default.SessionCookieKey].Value);
+                Int64 valid = Validated.Value == "False" ? 0 : 1;
+                Int64 userID = UserMgmt.LookupSession(Request.Cookies[Settings.Default.SessionCookieKey].Value);
                 string insertComment = "INSERT INTO Comments VALUES ({0}, '{1}', '{2}', '{3}', {4})";
                 SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString);
                 conn.Open();
@@ -35,6 +35,7 @@ namespace SuperSecureBank
                 SqlCommand command = new SqlCommand(insertComment, conn);
                 command.ExecuteNonQuery();
                 conn.Close();
+                Response.Redirect("Forum.aspx");
             }
             catch (Exception ex)
             {

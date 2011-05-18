@@ -17,7 +17,8 @@
 				<li>Apply for a line of credit</li>
 				<li>Contact other bank users in the forum</li>
 			</ul>
-			<a href="Account/Register.aspx">Click here to get started today!</a><br />
+			<a href="Account/Register.aspx">Click here to register today!</a><br />
+			If you're brave and would like to help us test our <a href="CreateUserTestPage.aspx">new silverlight registration control click here!</a><br />
 			Or use the link in the upper right hand corner to <a href="Account/Login.aspx">login</a>.
 		</div>
 	</asp:Panel>

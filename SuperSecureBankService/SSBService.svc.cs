@@ -7,12 +7,14 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data;
+using System.Threading;
 
 namespace SuperSecureBankService
 {
 	public class SSBService : ISSBService
 	{
-		public int CreateUser(string username, string email, string pass)
+		public Int64 CreateUser(string username, string email, string pass)
 		{
 			try
 			{
@@ -21,7 +23,7 @@ namespace SuperSecureBankService
 				conn.Open();
 				insertUser = String.Format(insertUser, username, email, pass);
 				SqlCommand command = new SqlCommand(insertUser, conn);
-				int userID = Convert.ToInt32(command.ExecuteScalar());
+				Int64 userID = Convert.ToInt64(command.ExecuteScalar());
 				conn.Close();
 				return userID;
 			}
@@ -31,11 +33,11 @@ namespace SuperSecureBankService
 			}
 		}
 
-		public int LookupSession(string sessionValue)
+		public Int64 LookupSession(string sessionValue)
 		{
-			int userID = 0;
-			int sessionID = 0;
-			if (int.TryParse(sessionValue, out sessionID))
+			Int64 userID = 0;
+			Int64 sessionID = 0;
+			if (Int64.TryParse(sessionValue, out sessionID))
 			{
 				string getUserID = "SELECT userID FROM sessions WHERE sessionID = {0}";
 				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -47,14 +49,14 @@ namespace SuperSecureBankService
 
 					while (reader.Read())
 					{
-						userID = reader.GetInt32(0);
+						userID = reader.GetInt64 (0);
 					}
 				}
 			}
 			return userID;
 		}
 
-		public static string LookupUsername(int userID)
+		public string LookupUsername(Int64 userID)
 		{
 			string userName = "";
 
@@ -74,9 +76,9 @@ namespace SuperSecureBankService
 			return userName;
 		}
 
-		public static int CheckUser(string username, string password)
+		public Int64 CheckUser(string username, string password)
 		{
-			int userID = 0;
+			Int64 userID = 0;
 
 			string getUserID = "SELECT userID FROM Users WHERE userName = '{0}' AND password = '{1}'";
 			using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -88,7 +90,7 @@ namespace SuperSecureBankService
 
 				while (reader.Read())
 				{
-					userID = reader.GetInt32(0);
+					userID = reader.GetInt64 (0);
 				}
 			}
 			return userID;
@@ -96,7 +98,7 @@ namespace SuperSecureBankService
 
 		public bool UserExists(string username)
 		{
-			int userID = 0;
+			Int64 userID = 0;
 
 			string getUserID = "SELECT userID FROM Users WHERE userName = '{0}'";
 			using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -108,15 +110,15 @@ namespace SuperSecureBankService
 
 				while (reader.Read())
 				{
-					userID = reader.GetInt32(0);
+					userID = reader.GetInt64 (0);
 				}
 			}
 			return userID != 0;
 		}
 
-		public static int CreateSession(int userID)
+		public Int64 CreateSession(Int64 userID)
 		{
-			int sessionID = SessionIDSingleton.Instance.NextSessionID;
+			Int64 sessionID = SessionIDSingleton.Instance.NextSessionID;
 			string insertSession = @"INSERT INTO sessions values ({0}, {1})";
 			SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString);
 			conn.Open();
@@ -128,7 +130,7 @@ namespace SuperSecureBankService
 			return sessionID;
 		}
 
-		public void RemoveSession(int sessionID)
+		public void RemoveSession(Int64 sessionID)
 		{
 			string deleteSession = @"DELETE FROM sessions WHERE sessionID = {0}";
 			SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString);
@@ -137,6 +139,170 @@ namespace SuperSecureBankService
 			SqlCommand command = new SqlCommand(deleteSession, conn);
 			command.ExecuteNonQuery();
 			conn.Close();
+		}
+
+		public List<Int64> GetAllAccounts()
+		{
+			string selectAccounts = @"SELECT * FROM FriendlyAccounts";
+
+			List<Int64> accountList = new List<long>();
+			try
+			{
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
+				{
+					conn.Open();
+					SqlCommand command = new SqlCommand(selectAccounts, conn);
+					SqlDataReader reader = command.ExecuteReader();
+					Int64 totalValue = 0;
+					while (reader.Read())
+					{
+						accountList.Add(reader.GetInt64(1));
+					}
+				}
+			}
+			catch
+			{
+				throw;
+			}
+			return accountList;
+		}
+
+		public DataTable GetAccounts(Int64 UserID)
+		{
+			string selectAccounts = @"SELECT * FROM FriendlyAccounts
+									WHERE userID = {0}";
+
+			DataTable dt = new DataTable();
+			try
+			{
+				dt.Columns.Add("accountID");
+				dt.Columns.Add("balance");
+				dt.Columns.Add("LevelName");
+				dt.Columns.Add("LevelDescription");
+				dt.Columns.Add("TypeName");
+				dt.Columns.Add("TypeDescription");
+				dt.Columns.Add("Status");
+
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
+				{
+					conn.Open();
+					selectAccounts = String.Format(selectAccounts, UserID);
+					SqlCommand command = new SqlCommand(selectAccounts, conn);
+					SqlDataReader reader = command.ExecuteReader();
+					Int64 totalValue = 0;
+					while (reader.Read())
+					{
+						DataRow dr = dt.NewRow();
+						dr["accountID"] = reader.GetInt64(1);
+						dr["balance"] = string.Format("{0:C}", reader.GetInt64(2));
+						dr["LevelName"] = reader.GetString(3);
+						dr["LevelDescription"] = reader.GetString(4);
+						dr["TypeName"] = reader.GetString(5);
+						dr["TypeDescription"] = reader.GetString(6);
+						dr["Status"] = reader.GetString(7);
+
+						totalValue += reader.GetInt64(2);
+
+						dt.Rows.Add(dr);
+					}
+
+					DataRow footer = dt.NewRow();
+					footer["accountID"] = "<strong>Total:</strong>";
+					footer["balance"] = string.Format("<strong>{0:C}</strong>", totalValue);
+					footer["LevelName"] = "";
+					footer["LevelDescription"] = "";
+					footer["TypeName"] = "";
+					footer["TypeDescription"] = "";
+					footer["Status"] = "";
+					dt.Rows.Add(footer);
+				}
+			}
+			catch
+			{
+				throw;
+			}
+			return dt;
+		}
+
+		public Int64 GetBalance(Int64 accountID)
+		{
+			string selectAccount = @"SELECT balance FROM Accounts WHERE accountID = {0}";
+			Int64 balance = 0;
+			try
+			{
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
+				{
+					conn.Open();
+					selectAccount = String.Format(selectAccount, accountID);
+					SqlCommand command = new SqlCommand(selectAccount, conn);
+					SqlDataReader reader = command.ExecuteReader();
+
+					while (reader.Read())
+					{
+						balance = reader.GetInt64(0);
+					}
+				}
+			}
+			catch
+			{
+				throw;
+			}
+			return balance;
+		}
+
+		public void Transfer(Int64 FromAccount, Int64 ToAccount, Int64 Amount)
+		{
+			try
+			{
+				Int64 FromAccountBalance = GetBalance(FromAccount);
+				Int64 ToAccountBalance = GetBalance(ToAccount);
+
+				UpdateBalance(ToAccount, ToAccountBalance + Amount);
+				Thread.Sleep(new Random().Next(1000, 5000)); //simulate a long account wire transfer that takes 1-5 seconds to happen
+				UpdateBalance(FromAccount, FromAccountBalance - Amount);
+			}
+			catch
+			{
+				throw;
+			}
+		}
+
+		public void UpdateBalance(Int64 Account, Int64 NewAmount)
+		{
+			try
+			{
+				string updateAmount = @"UPDATE Accounts SET balance={0} WHERE accountID = {1}";
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
+				{
+					conn.Open();
+					updateAmount = String.Format(updateAmount, NewAmount, Account);
+					SqlCommand command = new SqlCommand(updateAmount, conn);
+					command.ExecuteNonQuery();
+				}
+			}
+			catch
+			{
+				throw;
+			}
+		}
+
+		public void CreateAccount(Int64 userID, string accountType, string balance, string accountLevel, Int64 status)
+		{
+			try
+			{
+				string insertNewAccount = "INSERT INTO Accounts VALUES ({0}, {1}, {2}, {3}, {4})";
+				insertNewAccount = string.Format(insertNewAccount, userID, accountType, balance, accountLevel, status);
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
+				{
+					conn.Open();
+					SqlCommand command = new SqlCommand(insertNewAccount, conn);
+					command.ExecuteNonQuery();
+				}
+			}
+			catch
+			{
+				throw;
+			}
 		}
 	}
 }

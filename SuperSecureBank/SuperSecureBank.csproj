@@ -13,6 +13,7 @@
     <RootNamespace>SuperSecureBank</RootNamespace>
     <AssemblyName>SuperSecureBank</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightApplicationList>{F5B3EA5E-A8FF-4424-B877-9007FA9768F2}|..\CreateUser\CreateUser.csproj|ClientBin|False</SilverlightApplicationList>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +57,9 @@
     <Content Include="Admin.aspx" />
     <Content Include="ApplyForAccount.aspx" />
     <Content Include="ApplyForCredit.aspx" />
+    <Content Include="ClientBin\CreateUser.xap" />
+    <Content Include="CreateUserTestPage.aspx" />
+    <Content Include="CreateUserTestPage.html" />
     <Content Include="DoTransfer.aspx" />
     <Content Include="ErrorLog.aspx" />
     <Content Include="ExecuteSQL.aspx" />
@@ -91,6 +95,7 @@
     <Content Include="Images\SettingsAlt.png" />
     <Content Include="Images\StatusNotifier.png" />
     <Content Include="Images\Stocks.png" />
+    <Content Include="Silverlight.js" />
     <Content Include="Styles\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
@@ -101,7 +106,9 @@
     <Content Include="ActionDone.aspx" />
     <Content Include="ViewAccount.aspx" />
     <Content Include="ViewPage.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -264,6 +271,9 @@
     <Content Include="Content\content4.dat" />
     <Content Include="Content\content5.dat" />
     <Content Include="Content\content6.dat" />
+    <None Include="Content\content1.dat.bak" />
+    <None Include="Content\content1.bak" />
+    <None Include="Content\content1.dat~" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -16,7 +16,7 @@ namespace SuperSecureBank.Account
             try
             {
                 if (!string.IsNullOrEmpty(Request.Cookies[Settings.Default.SessionCookieKey].Value))
-                    UserMgmt.RemoveSession(Convert.ToInt32(Request.Cookies[Settings.Default.SessionCookieKey].Value));
+                    UserMgmt.RemoveSession(Convert.ToInt64(Request.Cookies[Settings.Default.SessionCookieKey].Value));
 
                 Response.Cookies[Settings.Default.SessionCookieKey].Value = "";
                 Response.Redirect("~/");

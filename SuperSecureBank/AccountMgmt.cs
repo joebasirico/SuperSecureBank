@@ -12,7 +12,7 @@ namespace SuperSecureBank
 {
 	public class AccountMgmt
 	{
-		public static DataTable GetAccounts(int UserID)
+		public static DataTable GetAccounts(Int64 UserID)
 		{
             
 			string selectAccounts = @"SELECT * FROM FriendlyAccounts
@@ -35,19 +35,19 @@ namespace SuperSecureBank
                     selectAccounts = String.Format(selectAccounts, UserID);
                     SqlCommand command = new SqlCommand(selectAccounts, conn);
                     SqlDataReader reader = command.ExecuteReader();
-                    int totalValue = 0;
+                    Int64 totalValue = 0;
                     while (reader.Read())
                     {
                         DataRow dr = dt.NewRow();
-                        dr["accountID"] = reader.GetInt32(1);
-                        dr["balance"] = string.Format("{0:C}", reader.GetInt32(2));
+                        dr["accountID"] = reader.GetInt64 (1);
+                        dr["balance"] = string.Format("{0:C}", reader.GetInt64 (2));
                         dr["LevelName"] = reader.GetString(3);
                         dr["LevelDescription"] = reader.GetString(4);
                         dr["TypeName"] = reader.GetString(5);
                         dr["TypeDescription"] = reader.GetString(6);
                         dr["Status"] = reader.GetString(7);
 
-                        totalValue += reader.GetInt32(2);
+                        totalValue += reader.GetInt64 (2);
 
                         dt.Rows.Add(dr);
                     }
@@ -70,10 +70,10 @@ namespace SuperSecureBank
             return dt;
 		}
 
-		public static int GetBalance(int accountID)
+		public static Int64 GetBalance(Int64 accountID)
 		{
 			string selectAccount = @"SELECT balance FROM Accounts WHERE accountID = {0}";
-			int balance = 0;
+			Int64 balance = 0;
             try
             {
                 using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -85,7 +85,7 @@ namespace SuperSecureBank
 
                     while (reader.Read())
                     {
-                        balance = reader.GetInt32(0);
+                        balance = reader.GetInt64 (0);
                     }
                 }
             }
@@ -96,12 +96,12 @@ namespace SuperSecureBank
 			return balance;
 		}
 
-		public static void Transfer(int FromAccount, int ToAccount, int Amount)
+		public static void Transfer(Int64 FromAccount, Int64 ToAccount, Int64 Amount)
 		{
             try
             {
-                int FromAccountBalance = GetBalance(FromAccount);
-                int ToAccountBalance = GetBalance(ToAccount);
+                Int64 FromAccountBalance = GetBalance(FromAccount);
+                Int64 ToAccountBalance = GetBalance(ToAccount);
 
                 UpdateBalance(ToAccount, ToAccountBalance + Amount);
                 Thread.Sleep(new Random().Next(1000, 5000)); //simulate a long account wire transfer that takes 1-5 seconds to happen
@@ -113,7 +113,7 @@ namespace SuperSecureBank
             }
 		}
 
-		public static void UpdateBalance(int Account, int NewAmount)
+		public static void UpdateBalance(Int64 Account, Int64 NewAmount)
 		{
             try
             {
@@ -132,7 +132,7 @@ namespace SuperSecureBank
             }
 		}
 
-		internal static ListItem[] GetAccountList(int userID)
+		internal static ListItem[] GetAccountList(Int64 userID)
 		{
 			List<ListItem> items = new List<ListItem>();
             try
@@ -147,8 +147,8 @@ namespace SuperSecureBank
 
                     while (reader.Read())
                     {
-                        int accountID = reader.GetInt32(1);
-                        int balance = reader.GetInt32(2);
+                        Int64 accountID = reader.GetInt64 (1);
+                        Int64 balance = reader.GetInt64 (2);
                         items.Add(new ListItem(string.Format("{0} : {1:C}", accountID, balance), accountID.ToString(), balance > 0));
                     }
                 }
@@ -160,7 +160,7 @@ namespace SuperSecureBank
 			return items.ToArray();
 		}
 
-		internal static void CreateAccount(int userID, string accountType, string balance, string accountLevel, int status)
+		internal static void CreateAccount(Int64 userID, string accountType, string balance, string accountLevel, Int64 status)
 		{
             try
             {

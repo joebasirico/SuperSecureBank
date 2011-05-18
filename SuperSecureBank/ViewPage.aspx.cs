@@ -44,7 +44,7 @@ namespace SuperSecureBank
                 string link = Lines[1];
 
                 StringBuilder sb = new StringBuilder();
-                for (int i = 2; i < Lines.Length; i++)
+                for (Int64 i = 2; i < Lines.Length; i++)
                 {
                     sb.AppendLine(Lines[i]);
                 }

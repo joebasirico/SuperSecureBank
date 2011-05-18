@@ -64,6 +64,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountMgmt.cs" />
     <Compile Include="SSBService.svc.cs">
       <DependentUpon>SSBService.svc</DependentUpon>
     </Compile>

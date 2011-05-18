@@ -7,7 +7,7 @@ namespace SuperSecureBankService
 {
 	public class SessionIDSingleton
 	{
-		int currentID = 0;
+		Int64 currentID = 0;
 		static readonly SessionIDSingleton instance = new SessionIDSingleton();
 
 		// Explicit static constructor to tell C# compiler
@@ -28,11 +28,11 @@ namespace SuperSecureBankService
 			}
 		}
 
-		public int NextSessionID
+		public Int64 NextSessionID
 		{
 			get
 			{
-				currentID = new Random(currentID).Next(1024);
+				currentID = new Random((int)currentID).Next(Int32.MaxValue);
 				return currentID;
 			}
 		}

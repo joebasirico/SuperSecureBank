@@ -15,9 +15,9 @@ namespace SuperSecureBank
 		{
 			try
 			{
-				AccountMgmt.Transfer(Convert.ToInt32(Request.Params["FromAccount"]),
-										Convert.ToInt32(Request.Params["ToAccount"]),
-										Convert.ToInt32(Request.Params["Amount"]));
+				AccountMgmt.Transfer(Convert.ToInt64(Request.Params["FromAccount"]),
+										Convert.ToInt64(Request.Params["ToAccount"]),
+										Convert.ToInt64(Request.Params["Amount"]));
 				Response.Redirect("ActionDone.aspx?Title=Transfer Success&Text=Your transfer was successful. If you moved funds within SuperSecure Bank accounts your funds are immediately available.");
 			}
 			catch (ThreadAbortException tae)

@@ -12,14 +12,14 @@ namespace SuperSecureBank.Account
 {
 	public partial class Login : System.Web.UI.Page
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (null != Request.Cookies[Settings.Default.SessionCookieKey])
-			{
-				if (0 != UserMgmt.LookupSession(Request.Cookies[Settings.Default.SessionCookieKey].Value))
-					Response.Redirect("~/Default.aspx");
-			}
-		}
+protected void Page_Load(object sender, EventArgs e)
+{
+	if (null != Request.Cookies[Settings.Default.SessionCookieKey])
+	{
+		if (0 != UserMgmt.LookupSession(Request.Cookies[Settings.Default.SessionCookieKey].Value))
+			Response.Redirect("~/Default.aspx");
+	}
+}
 
 		protected void LoginButton_Click(object sender, EventArgs e)
 		{
@@ -27,7 +27,7 @@ namespace SuperSecureBank.Account
             {
                 if (UserMgmt.UserExists(UserName.Text))
                 {
-                    int userID = UserMgmt.CheckUser(UserName.Text, Password.Text);
+                    Int64 userID = UserMgmt.CheckUser(UserName.Text, Password.Text);
                     if (0 != userID)
                     {
                         Response.Cookies[Settings.Default.SessionCookieKey].Value = UserMgmt.CreateSession(userID).ToString();

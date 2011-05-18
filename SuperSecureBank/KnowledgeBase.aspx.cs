@@ -16,7 +16,8 @@ namespace SuperSecureBank
             {
                 foreach (string f in Directory.EnumerateFiles(Server.MapPath("Content")))
                 {
-                    FileList.Text += string.Format("<li><a href=\"ViewPage.aspx?Page=Content\\{0}\">{1}</a></li>", Path.GetFileName(f), GetTitle(f));
+                    if(Path.GetExtension(f) == ".dat")
+                        FileList.Text += string.Format("<li><a href=\"ViewPage.aspx?Page=Content\\{0}\">{1}</a></li>", Path.GetFileName(f), GetTitle(f));
                 }
             }
             catch (Exception ex)

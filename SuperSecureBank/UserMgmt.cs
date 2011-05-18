@@ -10,7 +10,7 @@ namespace SuperSecureBank
 {
 	public static class UserMgmt
 	{
-		public static int CreateUser(string username, string email, string pass)
+		public static Int64 CreateUser(string username, string email, string pass)
 		{
 			try
 			{
@@ -19,7 +19,7 @@ namespace SuperSecureBank
 				conn.Open();
 				insertUser = String.Format(insertUser, username, email, pass);
 				SqlCommand command = new SqlCommand(insertUser, conn);
-				int userID = Convert.ToInt32(command.ExecuteScalar());
+				Int64 userID = Convert.ToInt64(command.ExecuteScalar());
 				conn.Close();
 				return userID;
 			}
@@ -29,13 +29,13 @@ namespace SuperSecureBank
 			}
 		}
 
-		public static int LookupSession(string sessionValue)
+		public static Int64 LookupSession(string sessionValue)
 		{
-			int userID = 0;
+			Int64 userID = 0;
             try
             {
-                int sessionID = 0;
-                if (int.TryParse(sessionValue, out sessionID))
+                Int64 sessionID = 0;
+                if (Int64.TryParse(sessionValue, out sessionID))
                 {
                     string getUserID = "SELECT userID FROM sessions WHERE sessionID = {0}";
                     using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -47,7 +47,7 @@ namespace SuperSecureBank
 
                         while (reader.Read())
                         {
-                            userID = reader.GetInt32(0);
+                            userID = reader.GetInt64 (0);
                         }
                     }
                 }
@@ -59,7 +59,7 @@ namespace SuperSecureBank
 			return userID;
 		}
 
-		public static string LookupUsername(int userID)
+		public static string LookupUsername(Int64 userID)
 		{
 			string userName = "";
             try
@@ -85,9 +85,9 @@ namespace SuperSecureBank
 			return userName;
 		}
 
-		public static int CheckUser(string username, string password)
+		public static Int64 CheckUser(string username, string password)
 		{
-			int userID = 0;
+			Int64 userID = 0;
             try
             {
                 string getUserID = "SELECT userID FROM Users WHERE userName = '{0}' AND password = '{1}'";
@@ -100,7 +100,7 @@ namespace SuperSecureBank
 
                     while (reader.Read())
                     {
-                        userID = reader.GetInt32(0);
+                        userID = reader.GetInt64 (0);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace SuperSecureBank
 
 		public static bool UserExists(string username)
 		{
-            int userID = 0;
+            Int64 userID = 0;
             try
             {
 
@@ -127,7 +127,7 @@ namespace SuperSecureBank
 
                     while (reader.Read())
                     {
-                        userID = reader.GetInt32(0);
+                        userID = reader.GetInt64 (0);
                     }
                 }
             }
@@ -138,9 +138,9 @@ namespace SuperSecureBank
 			return userID != 0;
 		}
 
-		public static int CreateSession(int userID)
+		public static Int64 CreateSession(Int64 userID)
 		{
-            int sessionID = 0;
+            Int64 sessionID = 0;
             try
             {
                 sessionID = SessionIDSingleton.Instance.NextSessionID;
@@ -159,7 +159,7 @@ namespace SuperSecureBank
 			return sessionID;
 		}
 
-		internal static void RemoveSession(int sessionID)
+		internal static void RemoveSession(Int64 sessionID)
 		{
             try
             {

@@ -26,7 +26,7 @@ namespace SuperSecureBank.Account
                 {
                     if (!UserMgmt.UserExists(UserName.Text))
                     {
-                        int userID = UserMgmt.CreateUser(UserName.Text, Email.Text, Password.Text);
+                        Int64 userID = UserMgmt.CreateUser(UserName.Text, Email.Text, Password.Text);
                         if (0 != userID)
                         {
                             Response.Cookies[Settings.Default.SessionCookieKey].Value = UserMgmt.CreateSession(userID).ToString();
@@ -62,7 +62,7 @@ namespace SuperSecureBank.Account
 			}
 		}
 
-		private void SetUserCookie(int userID)
+		private void SetUserCookie(Int64 userID)
 		{
 			Response.Cookies[Settings.Default.SessionCookieKey].Value = UserMgmt.CreateSession(userID).ToString();
 		}

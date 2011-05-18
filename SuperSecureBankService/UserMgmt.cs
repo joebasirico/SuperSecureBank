@@ -9,7 +9,7 @@ namespace SuperSecureBankService
 {
 	public static class UserMgmt
 	{
-		public static int CreateUser(string username, string email, string pass)
+		public static Int64 CreateUser(string username, string email, string pass)
 		{
 			try
 			{
@@ -18,7 +18,7 @@ namespace SuperSecureBankService
 				conn.Open();
 				insertUser = String.Format(insertUser, username, email, pass);
 				SqlCommand command = new SqlCommand(insertUser, conn);
-				int userID = Convert.ToInt32(command.ExecuteScalar());
+				Int64 userID = Convert.ToInt64(command.ExecuteScalar());
 				conn.Close();
 				return userID;
 			}
@@ -28,11 +28,11 @@ namespace SuperSecureBankService
 			}
 		}
 
-		public static int LookupSession(string sessionValue)
+		public static Int64 LookupSession(string sessionValue)
 		{
-			int userID = 0;
-			int sessionID = 0;
-			if (int.TryParse(sessionValue, out sessionID))
+			Int64 userID = 0;
+			Int64 sessionID = 0;
+			if (Int64.TryParse(sessionValue, out sessionID))
 			{
 				string getUserID = "SELECT userID FROM sessions WHERE sessionID = {0}";
 				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -44,16 +44,16 @@ namespace SuperSecureBankService
 
 					while (reader.Read())
 					{
-						userID = reader.GetInt32(0);
+						userID = reader.GetInt64 (0);
 					}
 				}
 			}
 			return userID;
 		}
 
-		public static string LookupUsername(int userID)
+		public static string LookupUsername(Int64 userID)
 		{
-			string userName = "";
+			string userName = "No valid user found.";
 
 			string getUserName = "SELECT userName FROM Users WHERE userID = {0}";
 			using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -71,9 +71,9 @@ namespace SuperSecureBankService
 			return userName;
 		}
 
-		public static int CheckUser(string username, string password)
+		public static Int64 CheckUser(string username, string password)
 		{
-			int userID = 0;
+			Int64 userID = 0;
 
 			string getUserID = "SELECT userID FROM Users WHERE userName = '{0}' AND password = '{1}'";
 			using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -85,7 +85,7 @@ namespace SuperSecureBankService
 
 				while (reader.Read())
 				{
-					userID = reader.GetInt32(0);
+					userID = reader.GetInt64(0);
 				}
 			}
 			return userID;
@@ -93,7 +93,7 @@ namespace SuperSecureBankService
 
 		public static bool UserExists(string username)
 		{
-			int userID = 0;
+			Int64 userID = 0;
 
 			string getUserID = "SELECT userID FROM Users WHERE userName = '{0}'";
 			using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString))
@@ -105,15 +105,15 @@ namespace SuperSecureBankService
 
 				while (reader.Read())
 				{
-					userID = reader.GetInt32(0);
+					userID = reader.GetInt64(0);
 				}
 			}
 			return userID != 0;
 		}
 
-		public static int CreateSession(int userID)
+		public static Int64 CreateSession(Int64 userID)
 		{
-			int sessionID = SessionIDSingleton.Instance.NextSessionID;
+			Int64 sessionID = SessionIDSingleton.Instance.NextSessionID;
 			string insertSession = @"INSERT INTO sessions values ({0}, {1})";
 			SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString);
 			conn.Open();
@@ -125,7 +125,7 @@ namespace SuperSecureBankService
 			return sessionID;
 		}
 
-		internal static void RemoveSession(int sessionID)
+		internal static void RemoveSession(Int64 sessionID)
 		{
 			string deleteSession = @"DELETE FROM sessions WHERE sessionID = {0}";
 			SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ssbcon"].ConnectionString);
